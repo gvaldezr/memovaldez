@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentes Amplificadas - Dev Deck Presentación</title>
+    <style>
+        :root {
+            --bg-cream: #faf8f5;
+            --grid-color: rgba(0, 0, 0, 0.06);
+            --hot-pink: #ff3399;
+            --bright-yellow: #ffcc00;
+            --cyan: #00eeff;
+            --black: #000000;
+            --white: #ffffff;
+            --bad-red: #ff4d4d;
+            --good-green: #2ee67e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Narrow', Arial, sans-serif;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-cream);
+            background-image: 
+                linear-gradient(var(--grid-color) 2px, transparent 2px),
+                linear-gradient(90deg, var(--grid-color) 2px, transparent 2px);
+            background-size: 25px 25px;
+            color: var(--black);
+        }
+
+        /* Presentation Container */
+        .deck-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            position: relative;
+        }
+
+        /* Slides Wrapper */
+        .slides-viewport {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            max-height: 750px;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: transparent;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideIn {
+            from { transform: scale(0.96); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* UI Global Elements */
+        .header-bar {
+            width: 100%;
+            background: var(--black);
+            color: var(--white);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 4px solid var(--black);
+            box-shadow: 4px 4px 0px var(--black);
+            transform: rotate(-0.3deg);
+            margin-bottom: 20px;
+            z-index: 10;
+        }
+
+        .header-bar .title {
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+        }
+
+        .header-bar .subtitle-tag {
+            background: var(--bright-yellow);
+            color: var(--black);
+            padding: 2px 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 2px solid var(--black);
+        }
+
+        /* Neo-Retro Components */
+        .mega-title-box {
+            background: var(--hot-pink);
+            border: 5px solid var(--black);
+            padding: 40px;
+            box-shadow: 8px 8px 0px var(--black);
+            transform: rotate(-1deg);
+            margin: auto;
+            text-align: center;
+            max-width: 850px;
+        }
+
+        .mega-title-box h1 {
+            font-size: 4.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 0.95;
+            color: var(--black);
+            -webkit-text-stroke: 1px var(--white);
+            margin-bottom: 15px;
+        }
+
+        .mega-title-box p {
+            font-size: 1.6rem;
+            font-weight: bold;
+            background: var(--white);
+            display: inline-block;
+            padding: 5px 15px;
+            border: 3px solid var(--black);
+            margin-top: 10px;
+        }
+
+        .slide-heading {
+            font-size: 2.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            background: var(--black);
+            color: var(--white);
+            padding: 5px 20px;
+            display: inline-block;
+            margin-bottom: 25px;
+            border: 4px solid var(--black);
+            box-shadow: 4px 4px 0px var(--cyan);
+            align-self: flex-start;
+        }
+        
+        .slide-heading.yellow-shadow { box-shadow: 4px 4px 0px var(--bright-yellow); }
+        .slide-heading.pink-shadow { box-shadow: 4px 4px 0px var(--hot-pink); }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--white);
+            border: 4px solid var(--black);
+            padding: 20px;
+            box-shadow: 5px 5px 0px var(--black);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card.pink-header { border-top: 15px solid var(--hot-pink); }
+        .card.yellow-header { border-top: 15px solid var(--bright-yellow); }
+        .card.cyan-header { border-top: 15px solid var(--cyan); }
+
+        .card-tag {
+            position: absolute;
+            top: -18px;
+            right: 15px;
+            background: var(--black);
+            color: var(--white);
+            padding: 2px 8px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            border: 2px solid var(--black);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            border-bottom: 3px dashed var(--black);
+            padding-bottom: 5px;
+        }
+
+        .card p {
+            font-size: 1.1rem;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+
+        /* Split prompt view (Before / After) */
+        .prompt-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        .prompt-box {
+            border: 4px solid var(--black);
+            box-shadow: 6px 6px 0px var(--black);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prompt-box .badge-title {
+            padding: 8px 15px;
+            font-weight: 900;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            border-bottom: 4px solid var(--black);
+            color: var(--black);
+        }
+
+        .prompt-box.bad { background: #ffe6e6; }
+        .prompt-box.bad .badge-title { background: var(--bad-red); }
+        .prompt-box.good { background: #e6ffee; }
+        .prompt-box.good .badge-title { background: var(--good-green); }
+
+        .prompt-code {
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            font-size: 1.05rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        /* Timeline / Layers Styles */
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .timeline-row {
+            display: grid;
+            grid-template-columns: 120px 4px 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .timeline-time {
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: var(--black);
+            color: var(--white);
+            padding: 5px;
+            text-align: center;
+            border: 3px solid var(--black);
+            box-shadow: 3px 3px 0px var(--bright-yellow);
+        }
+
+        .timeline-bar {
+            width: 4px;
+            height: 100%;
+            background: var(--black);
+            position: relative;
+        }
+        .timeline-bar::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background: var(--hot-pink);
+            border: 2px solid var(--black);
+        }
+
+        .timeline-block {
+            background: var(--white);
+            border: 3px solid var(--black);
+            padding: 12px 20px;
+            box-shadow: 4px 4px 0px var(--black);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-block h4 {
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        /* Architecture stacked layers */
+        .arch-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .arch-layer {
+            border: 4px solid var(--black);
+            padding: 15px 25px;
+            font-size: 1.3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 5px 5px 0px var(--black);
+        }
+        .arch-layer.pink { background: var(--hot-pink); }
+        .arch-layer.yellow { background: var(--bright-yellow); }
+        .arch-layer.cyan { background: var(--cyan); }
+        
+        .arch-layer span.desc {
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: none;
+            background: var(--white);
+            padding: 2px 10px;
+            border: 2px solid var(--black);
+        }
+
+        /* Footer Controls */
+        .footer-controls {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            z-index: 10;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            background: var(--white);
+            border: 4px solid var(--black);
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px var(--black);
+            transition: all 0.05s ease;
+            user-select: none;
+        }
+
+        .btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 1px 1px 0px var(--black);
+        }
+
+        .btn.pink-btn { background: var(--hot-pink); }
+        .btn.cyan-btn { background: var(--cyan); }
+
+        .slide-counter {
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: var(--black);
+            color: var(--white);
+            padding: 5px 15px;
+            border: 3px solid var(--black);
+            transform: rotate(1deg);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="deck-container">
+        
+        <div class="header-bar">
+            <div class="title">🚀 Mentes Amplificadas</div>
+            <div class="subtitle-tag">Anáhuac Mayab</div>
+        </div>
+
+        <div class="slides-viewport">
+
+            <div class="slide active" id="slide-1">
+                <div class="mega-title-box">
+                    <h1>MENTES<br>AMPLIFICADAS</h1>
+                    <p>La IA como multiplicador cognitivo institucional</p>
+                </div>
+                <div style="text-align: center; margin-top: 30px; font-size: 1.3rem; font-weight: bold; text-transform: uppercase;">
+                    ⚡ Presiona <span style="background: var(--bright-yellow); border:2px solid #000; padding:2px 6px;">Espacio</span> o <span style="background: var(--cyan); border:2px solid #000; padding:2px 6px;">▶</span> para avanzar
+                </div>
+            </div>
+
+            <div class="slide" id="slide-2">
+                <div class="slide-heading">MAPA DE RUTA</div>
+                <div class="timeline-container">
+                    <div class="timeline-row">
+                        <div class="timeline-time"></div>
+                        <div class="timeline-bar"></div>
+                        <div class="timeline-block">
+                            <h4>El Mindset</h4>
+                            <span class="desc">IA como amplificador, no reemplazo.</span>
+                        </div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="timeline-time">1</div>
+                        <div class="timeline-bar"></div>
+                        <div class="timeline-block" style="border-left: 10px solid var(--cyan);">
+                            <h4>Bloque 1: Comunicación y Vinculación (CO-STAR)</h4>
+                            <span class="desc">Taller Relámpago: Reescribir el flujo de atención en campus.</span>
+                        </div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="timeline-time">2</div>
+                        <div class="timeline-bar"></div>
+                        <div class="timeline-block" style="border-left: 10px solid var(--bright-yellow);">
+                            <h4>Bloque 2: El Arsenal de Gestión (RACE + RISEN)</h4>
+                            <span class="desc">Estrategia Académica vs. Restricciones Operativas de Procesos.</span>
+                        </div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="timeline-time">3</div>
+                        <div class="timeline-bar"></div>
+                        <div class="timeline-block" style="border-left: 10px solid var(--hot-pink);">
+                            <h4>Bloque 3: Ingeniería de Contexto</h4>
+                            <span class="desc">Inyección en vivo de la misión de la Universidad Anáhuac.</span>
+                        </div>
+                    </div>
+                    <div class="timeline-row">
+                        <div class="timeline-time">4</div>
+                        <div class="timeline-bar"></div>
+                        <div class="timeline-block">
+                            <h4>Cierre & Desafío de Transferencia Inmediata</h4>
+                            <span class="desc">Q&A y compromiso de aplicación real en la semana.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide" id="slide-3">
+                <div class="slide-heading yellow-shadow">EL DOLOR: LA AMBIGÜEDAD COGNITIVA</div>
+                <div class="content-grid" style="grid-template-columns: 1fr 1.3fr;">
+                    <div class="card pink-header">
+                        <h3>¿Por qué suena robótico?</h3>
+                        <p>Cuando le pedimos a una IA "escribe un correo para los alumnos", la máquina improvisa. Ante la falta de estructura, la IA rellena los huecos vacíos con respuestas genéricas o alucinaciones normativas.</p>
+                    </div>
+                    <div class="card cyan-header" style="justify-content: center; background: var(--black); color: var(--white);">
+                        <h3 style="color: var(--cyan); border-bottom-color: var(--cyan); font-size: 2.3rem;">EL DATO DURO</h3>
+                        <p style="font-size: 1.6rem; line-height: 1.2;">"El uso de una estructura formal y limpia (Frameworks de Prompts) incrementa la precisión y consistencia del output hasta en un <span style="color: var(--bright-yellow); font-size: 2.2rem; font-weight: 900;">92.5%</span> sin importar el modelo utilizado."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide" id="slide-4">
+                <div class="slide-heading pink-shadow">FRAMEWORK CO-STAR: VINCULACIÓN Y ATENCIÓN</div>
+                <div class="content-grid">
+                    <div class="card cyan-header"><div class="card-tag">C</div><h3>Contexto</h3><p>Los antecedentes exactos. Qué ocurre en la universidad en este preciso instante.</p></div>
+                    <div class="card yellow-header"><div class="card-tag">O</div><h3>Objetivo</h3><p>La tarea concreta que la IA debe ejecutar sin desviarse del foco.</p></div>
+                    <div class="card pink-header"><div class="card-tag">S</div><h3>Estilo</h3><p>El perfil profesional asignado (Ej: Coordinador de Servicios Escolares).</p></div>
+                    <div class="card cyan-header"><div class="card-tag">T</div><h3>Tono</h3><p>La línea emocional: Empático, institucional, humano, resolutivo.</p></div>
+                    <div class="card yellow-header"><div class="card-tag">A</div><h3>Audiencia</h3><p>Para quién se escribe: Alumnos de reingreso, padres de familia o investigadores.</p></div>
+                    <div class="card pink-header"><div class="card-tag">R</div><h3>Respuesta</h3><p>El formato estructural exacto (Ej: Correo formal con viñetas).</p></div>
+                </div>
+            </div>
+
+            <div class="slide" id="slide-5">
+                <div class="slide-heading">CO-STAR EN ACCIÓN: ALTAS Y BAJAS</div>
+                <div class="prompt-comparison">
+                    <div class="prompt-box bad">
+                        <div class="badge-title">❌ Prompt Improvisado (Malo)</div>
+                        <div class="prompt-code">Escribe un correo para los alumnos avisando que ya empezó el periodo de altas y bajas de materias y que tengan paciencia si el sistema se traba.</div>
+                    </div>
+                    <div class="prompt-box good">
+                        <div class="badge-title">🟢 Prompt Estructurado (CO-STAR)</div>
+                        <div class="prompt-code"><b>CONTEXTO:</b> Estamos iniciando el semestre en la Universidad Anáhuac. El sistema de inscripción registra saturación de accesos, retrasando las altas y bajas. Los alumnos están ansiosos.
+<b>OBJETIVO:</b> Redactar un correo informativo y de contención que guíe al alumno si el sistema falla.
+<b>ESTILE:</b> Coordinador de Servicios Escolares.
+<b>TONO:</b> Empático, institucional, resolutivo y muy cercano.
+<b>AUDIENCIA:</b> Alumnos de reingreso de licenciatura.
+<b>RESPUESTA:</b> Correo con asunto empático y 3 recomendaciones de soporte.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide" id="slide-6">
+                <div class="slide-heading yellow-shadow">FRAMEWORK RACE: LIDERAZGO Y ESTRATEGIA</div>
+                <div style="font-size: 1.3rem; font-weight: bold; margin-bottom: 20px;">Ideal para Directores de Facultad y Planeación Curricular.</div>
+                <div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="card pink-header"><div class="card-tag">R</div><h3>Rol</h3><p>La identidad experta (Ej: Consultor Senior en Innovación Curricular).</p></div>
+                    <div class="card cyan-header"><div class="card-tag">A</div><h3>Acción</h3><p>La directriz ejecutiva a desarrollar (Estructurar propuesta, evaluar indicadores).</p></div>
+                    <div class="card yellow-header"><div class="card-tag">C</div><h3>Contexto</h3><p>Líneas clave del Modelo Educativo Anáhuac o normativas FIMPES.</p></div>
+                    <div class="card pink-header" style="background: var(--bright-yellow);"><div class="card-tag" style="background: var(--hot-pink);">E</div><h3>Expectativa</h3><p><b>El núcleo de poder:</b> Criterios estrictos de éxito y métricas de entrega final.</p></div>
+                </div>
+            </div>
+
+            <div class="slide" id="slide-7">
+                <div class="slide-heading">RACE EN ACCIÓN: JUNTA DE FACULTAD</div>
+                <div class="prompt-comparison">
+                    <div class="prompt-box bad">
+                        <div class="badge-title">❌ Prompt Improvisado (Malo)</div>
+                        <div class="prompt-code">Hazme una propuesta para meter una clase de Inteligencia Artificial en la carrera.</div>
+                    </div>
+                    <div class="prompt-box good">
+                        <div class="badge-title">🟢 Prompt Estructurado (RACE)</div>
+                        <div class="prompt-code"><b>ROL:</b> Consultor experto en rediseño curricular universitario en Latam.
+<b>ACCIÓN:</b> Estructurar una propuesta de justificación académica para implementar la materia obligatoria "IA y Liderazgo Ético".
+<b>CONTEXTO:</b> La Universidad Anáhuac se rige bajo el Modelo de Formación Integral centrado en la persona y el Liderazgo de Acción Positiva.
+<b>EXPECTATIVA:</b> Formato ejecutivo de tres secciones: 1) Diagnóstico, 2) Alineación con el Ideario Anáhuac, 3) Competencias Clave. Máximo 500 palabras, con subtítulos claros.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide" id="slide-8">
+                <div class="slide-heading pink-shadow">FRAMEWORK RISEN: OPERACIONES Y PROCESOS</div>
+                <div style="font-size: 1.3rem; font-weight: bold; margin-bottom: 20px;">Ideal para Coordinadores Administrativos. Su fuerza radica en blindar las restricciones.</div>
+                <div class="content-grid">
+                    <div class="card yellow-header"><h3>R • Rol</h3><p>Ingeniero de Procesos y Operaciones de Oficina Universitaria.</p></div>
+                    <div class="card pink-header"><h3>I • Instrucción</h3><p>Diseñar guías de usuario o manuales paso a paso de tareas críticas.</p></div>
+                    <div class="card cyan-header"><h3>S • Steps</h3><p>Desglose cronológico explícito (Fase 1, Fase 2, Fase 3).</p></div>
+                    <div class="card yellow-header"><h3>E • End Goal</h3><p>El fin último: Reducir a cero los errores y demoras contables o de logística.</p></div>
+                    <div class="card pink-header" style="background: var(--cyan);"><h3>N • Narrowing</h3><p><b>Restricciones estrictas:</b> Qué atajos prohibir, qué palabras omitir, límites temporales duros.</p></div>
+                </div>
+            </div>
+
+            <div class="slide" id="slide-9">
+                <div class="slide-heading">RISEN EN ACCIÓN: CONTROL DE VIÁTICOS</div>
+                <div class="prompt-comparison">
+                    <div class="prompt-box bad">
+                        <div class="badge-title">❌ Prompt Improvisado (Malo)</div>
+                        <div class="prompt-code">Escribe un manualito rápido para que la gente de la oficina sepa cómo pedir los viáticos sin equivocarse tanto.</div>
+                    </div>
+                    <div class="prompt-box good">
+                        <div class="badge-title">🟢 Prompt Estructurado (RISEN)</div>
+                        <div class="prompt-code"><b>ROL:</b> Administrador de Operaciones Universitarias.
+<b>INSTRUCCIONES:</b> Diseña una guía rápida (Quick Start) para la solicitud de viáticos y reembolsos académicos.
+<b>STEPS:</b> Divide en: Fase 1 (Pre-aprobación), Fase 2 (Validación de facturas con SAT), Fase 3 (Cierre de plataforma).
+<b>END GOAL:</b> Evitar retrasos en pagos y rechazos de auditoría.
+<b>NARROWING:</b> 1) No inventes nombres de softwares, llámalo "portal digital de finanzas". 2) Prohibido usar "lo antes posible", define plazos fijos de "máximo 5 días hábiles".</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide" id="slide-10">
+                <div class="slide-heading yellow-shadow">LA EVOLUCIÓN: INGENIERÍA DE CONTEXTO</div>
+                <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 25px; text-align: center;">Dejar de afinar la instrucción inmediata (Prompt) para dotar a la IA de una Memoria Institucional.</div>
+                
+                <div class="arch-stack">
+                    <div class="arch-layer pink">1. INGENIERÍA DE PROMPTS<span class="desc">Qué le decimos en el momento</span></div>
+                    <div style="text-align: center; font-weight: 900; font-size: 1.2rem;">▲ LA VERDADERA BASE DE VALOR AVANZADO ESTÁ ABAJO ▲</div>
+                    <div class="arch-layer cyan">2. INGENIERÍA DE CONTEXTO<span class="desc">Lo que el modelo SABE antes de hablar</span></div>
+                    <div class="arch-layer yellow">3. MEMORIA DE TRABAJO ANÁHUAC<span class="desc">Filosofía, Reglamentos internos, Historiales</span></div>
+                </div>
+            </div>
+
+            <div class="slide" id="slide-11">
+                <div class="slide-heading pink-shadow">DEMO EN VIVO: EL PODER DEL IDEARIO ANÁHUAC</div>
+                <div class="prompt-comparison">
+                    <div class="prompt-box bad">
+                        <div class="badge-title">Output Sin Contexto (Chatbot Común)</div>
+                        <div class="prompt-code" style="font-family: sans-serif; font-size: 1rem;">"¡Bienvenidos a todos los estudiantes al nuevo ciclo escolar! Estamos muy emocionados de tenerlos en nuestro campus. Este año estará lleno de retos y oportunidades académicas para lograr el éxito profesional en el mercado..."
+                        
+<i>*Nota: Texto corporativo, plano, genérico. Podría ser cualquier universidad.*</i></div>
+                    </div>
+                    <div class="prompt-box good" style="background: #e6f7ff;">
+                        <div class="badge-title" style="background: var(--cyan);">Output Con Contexto Inyectado (Filosofía Anáhuac)</div>
+                        <div class="prompt-code" style="font-family: sans-serif; font-size: 1rem; color: #003366;">"¡Bienvenidos a su nueva casa de estudios, la Universidad Anáhuac! A partir de esta semana, inician un camino de <b>formación integral</b> para descubrir su máximo potencial humano. Estamos aquí para acompañarlos a convertirse en los verdaderos <b>líderes de acción positiva</b> que nuestra sociedad necesita, guiados siempre por el compromiso genuino con el bien común..."</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide" id="slide-12">
+                <div class="mega-title-box" style="background: var(--bright-yellow); max-width: 900px; transform: rotate(0.5deg);">
+                    <h1 style="-webkit-text-stroke: 1px var(--black); font-size: 3.8rem;">"LA IA NO PIENSA POR TI,<br>PIENSA CONTIGO"</h1>
+                    <p style="background: var(--black); color: var(--white); font-size: 1.4rem;">Requiere tu experiencia humana para guiarla correctamente.</p>
+                </div>
+                <div class="card pink-header" style="max-width: 700px; margin: 30px auto 0 auto; text-align: center;">
+                    <h3>EL DESAFÍO TÁCTICO</h3>
+                    <p>Toma la tarea más compleja o el correo más delicado que tengas pendiente para esta semana. Aplica el framework CO-STAR o RACE en tu herramienta preferida, inyecta tus datos y observa la diferencia radical.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-controls">
+            <button class="btn pink-btn" id="fullscreen-btn">📺 Fullscreen</button>
+            <div class="nav-buttons">
+                <button class="btn" id="prev-btn">◀ Atrás</button>
+                <div class="slide-counter" id="slide-num">1 / 12</div>
+                <button class="btn cyan-btn" id="next-btn">Sig ▶</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const slideNum = document.getElementById('slide-num');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        
+        let currentSlide = 0;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                if(index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            slideNum.textContent = `${currentSlide + 1} / ${slides.length}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+            }
+        }
+
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        // Controles de teclado
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // Soporte de Pantalla Completa Web Pro
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Error intentando activar pantalla completa: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+    </script>
+</body>
+</html>
