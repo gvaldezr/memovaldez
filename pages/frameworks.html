@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva de Ingeniería de Prompts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .framework-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .framework-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+        }
+        .framework-card.open .framework-details {
+            max-height: 1000px; /* Adjust as needed */
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .framework-card.open .arrow-icon {
+            transform: rotate(180deg);
+        }
+        .arrow-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+        .code-block {
+            background-color: #1f2937;
+            color: #d1d5db;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #10B981;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 10;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 30px;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.5s linear;
+        }
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Guía Interactiva de Ingeniería de Prompts</h1>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">Un recurso para que el personal universitario aprenda a crear prompts de IA efectivos y eficientes para sus tareas diarias.</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Interactive Builder -->
+            <div class="lg:col-span-1 sticky top-8 self-start">
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900">Constructor de Prompts</h2>
+                    <p class="text-gray-600 mb-6">Seleccione un framework y complete los campos para generar un prompt estructurado.</p>
+                    
+                    <div class="mb-4">
+                        <label for="framework_selector" class="block text-sm font-medium text-gray-700 mb-1">Framework:</label>
+                        <select id="framework_selector" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <!-- Options will be dynamically inserted here -->
+                        </select>
+                    </div>
+
+                    <div id="interactive_builder_fields" class="space-y-4">
+                        <!-- Fields will be dynamically inserted here -->
+                    </div>
+
+                    <button onclick="generatePrompt()" class="w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                        Generar Prompt
+                    </button>
+
+                    <div id="prompt_output_container" class="mt-6" style="display: none;">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Prompt Generado:</h3>
+                        <div class="relative">
+                            <div id="prompt_output" class="code-block text-sm"></div>
+                            <button onclick="copyToClipboard()" class="absolute top-2 right-2 bg-gray-600 text-gray-200 p-2 rounded-md hover:bg-gray-500 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                  <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                                  <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frameworks Explanation -->
+            <div class="lg:col-span-2">
+                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-900">¿Qué es un Framework de Prompts?</h2>
+                    <p class="text-gray-600 mb-4">Un framework de prompts eficaz proporciona una estructura clara, incluye el contexto necesario y establece expectativas explícitas para la IA. Piense en ello como dar instrucciones detalladas en lugar de una solicitud vaga.</p>
+                    <p class="text-gray-600">A continuación se presentan varios frameworks populares que pueden mejorar drásticamente la calidad de las respuestas de la IA.</p>
+                    
+                    <div id="frameworks_list" class="mt-8 space-y-4">
+                        <!-- Framework cards will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">¡Prompt copiado al portapapeles!</div>
+
+    <script>
+        // Data for frameworks
+        const frameworks = [
+            { id: 'RACE', name: '1. RACE: El Experto en Role-Playing', standsFor: 'Rol, Acción, Contexto, Expectativa', why: 'Ideal cuando se necesita una respuesta que requiera conocimientos específicos. Es como "elegir un personaje" para la IA, convirtiéndola en un asesor financiero, un experto en marketing o cualquier especialista que necesite.', bestFor: 'Contenido especializado, consejos de expertos, creación de tutoriales técnicos.' },
+            { id: 'TAG', name: '2. TAG: Simple pero Potente', standsFor: 'Tarea, Acción, Objetivo', why: 'Perfecto para cuando tienes prisa. Es maravillosamente simple pero cumple su función siempre. Sin rodeos, solo resultados.', bestFor: 'Resúmenes, análisis y resolución de problemas sencillos.' },
+            { id: 'TRACE', name: '3. TRACE: Cuando los Ejemplos Importan', standsFor: 'Tarea, Petición, Acción, Contexto, Ejemplo', why: 'El arma secreta cuando tienes una visión clara pero te cuesta explicarla. El componente de ejemplo es como mostrarle a la IA una imagen de lo que quieres en lugar de solo describirlo.', bestFor: 'Textos de marketing, contenido creativo o cualquier cosa donde el estilo importe tanto como la sustancia.' },
+            { id: 'CARE', name: '4. CARE: Soluciones Basadas en el Contexto', standsFor: 'Contexto, Acción, Resultado, Ejemplo', why: 'Pone el contexto en primer plano, lo que es perfecto para solicitudes específicas de una situación. Funciona de maravilla cuando el trasfondo es crucial para entender lo que necesitas.', bestFor: 'Comunicaciones, contenido basado en escenarios, guiones de servicio al cliente.' },
+            { id: 'APE', name: '5. APE: Resultados Orientados a un Propósito', standsFor: 'Acción, Propósito, Expectativa', why: 'Conecta el "qué" con el "porqué". Cuando la IA entiende tu propósito subyacente, los resultados se alinean mucho mejor con lo que realmente necesitas.', bestFor: 'Ideación de contenido, materiales de marketing y cualquier cosa donde entender el "porqué" mejore los resultados.' },
+            { id: 'BAB', name: '6. BAB: Narrativa de Problema-Solución', standsFor: 'Antes, Después, Puente', why: 'Crea un arco narrativo convincente que es irresistible para el contenido persuasivo. Es como contar una mini-historia con un principio, un desarrollo y un final.', bestFor: 'Escritura persuasiva, textos de marketing, resolución de problemas y planificación estratégica.' },
+            { id: 'RTF', name: '7. RTF: Resultados Estructurados Basados en Roles', standsFor: 'Rol, Tarea, Formato/Finalización', why: 'Combina el role-playing con requisitos de salida estructurados. Genial cuando tanto la experiencia como la presentación importan por igual.', bestFor: 'Contenido que requiere experiencia específica y una presentación estructurada (documentación técnica, guías de viaje).' },
+            { id: 'RISE', name: '8. RISE: Tareas Orientadas a Procesos', standsFor: 'Rol, Input, Pasos, Expectativa', why: 'Ideal para tareas complejas que requieren un flujo de trabajo específico. Desglosar el proceso en pasos claros marca una gran diferencia en la calidad del resultado.', bestFor: 'Edición, análisis de datos, guías paso a paso y cualquier tarea donde el proceso sea importante.' },
+            { id: 'CRISPE', name: '9. CRISPE: Exploración Creativa', standsFor: 'Capacidad/Rol, Insight, Statement (Declaración), Personalidad, Experimento', why: 'Es un campo de juego creativo. El componente "Experimento" anima a la IA a pensar fuera de la caja y explorar múltiples posibilidades.', bestFor: 'Brainstorming, generación de ideas y resolución creativa de problemas.' },
+            { id: 'COAST', name: '10. COAST: Planificación Estratégica', standsFor: 'Contexto, Objetivo, Acciones, Escenario, Tarea', why: 'Proporciona una estructura completa para tareas de planificación complejas. Invaluable para proyectos que necesitan conectar objetivos de alto nivel con acciones específicas.', bestFor: 'Planificación de proyectos, desarrollo de programas e iniciativas estratégicas.' },
+            { id: 'RAIN', name: '11. R-A-I-N: Trabajo Creativo Táctico', standsFor: 'Rol, Objetivo (Aim), Input, Objetivo Numérico', why: 'Perfecto para trabajo creativo con resultados medibles. El objetivo numérico mantiene la creatividad anclada en resultados prácticos.', bestFor: 'Tareas de diseño, mejoras de UX y trabajo creativo con KPIs medibles.' },
+            { id: 'FLOW', name: '12. F-L-O-W: Creación de Contenido', standsFor: 'Función, Nivel, Output, Métrica de Éxito (Win Metric)', why: 'Define claramente el nivel de experiencia de la audiencia y las métricas de éxito, obteniendo contenido que realmente resuena con los lectores.', bestFor: 'Contenido SEO, publicaciones de blog y escritura dirigida a audiencias específicas.' },
+            { id: 'PIVO', name: '13. P-I-V-O: Asesoramiento Estratégico', standsFor: 'Problema, Insights, Voz, Resultado (Outcome)', why: 'Enmarca los problemas de una manera orientada a la solución. El componente "Voz" añade una perspectiva específica que enriquece la respuesta.', bestFor: 'Estrategia de negocio, resolución de problemas y contenido de asesoramiento.' },
+            { id: 'SEED', name: '14. S-E-E-D: Contenido Educativo', standsFor: 'Situación, Objetivo Final (End Goal), Ejemplos, Entregables', why: 'Estructura el contenido educativo de manera hermosa, creando materiales de aprendizaje que son a la vez completos y prácticos.', bestFor: 'Desarrollo de cursos, materiales de formación y contenido educativo.' },
+            { id: 'DEEP', name: '15. D.E.E.P.: Creación de Contenido Experto', standsFor: 'Dirección, Información Existente, Experiencia (Expertise), Tono Preferido', why: 'Ideal para contenido sofisticado. Crea material a nivel de experto que no solo informa, sino que impresiona a los lectores con su profundidad.', bestFor: 'Artículos en profundidad, guías de expertos y contenido sofisticado.' }
+        ];
+
+        const frameworkFields = {
+            RACE: [ { id: 'role', label: 'Rol', placeholder: 'Ej: Eres un experimentado Director de Finanzas...' }, { id: 'action', label: 'Acción', placeholder: 'Ej: Analiza el estado de resultados trimestral...' }, { id: 'context', label: 'Contexto', placeholder: 'Ej: Este análisis es para la próxima reunión del Consejo...' }, { id: 'expectation', label: 'Expectativa', placeholder: 'Ej: Presenta tus hallazgos en una tabla markdown...' } ],
+            TAG: [ { id: 'task', label: 'Tarea', placeholder: 'Ej: Resume el artículo adjunto...' }, { id: 'action', label: 'Acción', placeholder: 'Ej: Céntrate en extraer los avances clave...' }, { id: 'goal', label: 'Objetivo', placeholder: 'Ej: El resumen debe proporcionar una visión general rápida...' } ],
+            TRACE: [ { id: 'task', label: 'Tarea', placeholder: 'Ej: Genera descripciones de producto...' }, { id: 'request', label: 'Petición', placeholder: 'Ej: Necesito tres descripciones distintas.' }, { id: 'action', label: 'Acción', placeholder: 'Ej: Para cada una, resalta su propuesta de valor única...' }, { id: 'context', label: 'Contexto', placeholder: 'Ej: El público objetivo son millennials con conciencia ecológica.' }, { id: 'example', label: 'Ejemplo', placeholder: 'Ej: "¡Bebe de forma sostenible con la botella AquaPure!..."' } ],
+            CARE: [ { id: 'context', label: 'Contexto', placeholder: 'Ej: Estamos lanzando una nueva app móvil...' }, { id: 'action', label: 'Acción', placeholder: 'Ej: Redacta un correo electrónico de captación para beta testers.' }, { id: 'result', label: 'Resultado', placeholder: 'Ej: El correo debe ser persuasivo y claro...' }, { id: 'example', label: 'Ejemplo', placeholder: 'Ej: "Sé de los primeros en experimentar una forma revolucionaria de aprender..."' } ],
+            APE: [ { id: 'action', label: 'Acción', placeholder: 'Ej: Genera cinco títulos para entradas de blog.' }, { id: 'purpose', label: 'Propósito', placeholder: 'Ej: Atraer tráfico de búsqueda orgánico para palabras clave...' }, { id: 'expectation', label: 'Expectativa', placeholder: 'Ej: Los títulos deben ser atractivos, amigables para SEO...' } ],
+            BAB: [ { id: 'before', label: 'Antes (Problema)', placeholder: 'Ej: Nuestro equipo se siente abrumado por demasiadas reuniones...' }, { id: 'after', label: 'Después (Estado Deseado)', placeholder: 'Ej: Queremos un entorno donde las reuniones sean eficientes...' }, { id: 'bridge', label: 'Puente (Solución)', placeholder: 'Ej: Proporciona un plan de acción con 5 estrategias...' } ],
+            RTF: [ { id: 'role', label: 'Rol', placeholder: 'Ej: Eres un escritor de viajes experimentado...' }, { id: 'task', label: 'Tarea', placeholder: 'Ej: Crea un itinerario para un viaje de 7 días...' }, { id: 'format', label: 'Formato/Finalización', placeholder: 'Ej: Presenta el itinerario en una tabla con columnas...' } ],
+            RISE: [ { id: 'role', label: 'Rol', placeholder: 'Ej: Eres un meticuloso corrector y editor.' }, { id: 'input', label: 'Input', placeholder: 'Ej: El siguiente borrador de entrada de blog: [Pegar texto]' }, { id: 'steps', label: 'Pasos', placeholder: 'Ej: 1. Corrige errores gramaticales. 2. Mejora la claridad...' }, { id: 'expectation', label: 'Expectativa', placeholder: 'Ej: El resultado debe ser la versión editada del post...' } ],
+            CRISPE: [ { id: 'capacity', label: 'Capacidad/Rol', placeholder: 'Ej: Eres un estratega de marketing innovador.' }, { id: 'insight', label: 'Insight (Contexto)', placeholder: 'Ej: Somos una pequeña cafetería artesanal con poco tráfico...' }, { id: 'statement', label: 'Statement (Declaración)', placeholder: 'Ej: Genera tres ideas de campañas de marketing...' }, { id: 'personality', label: 'Personalidad', placeholder: 'Ej: Las ideas deben ser creativas, económicas y con un tono lúdico...' }, { id: 'experiment', label: 'Experimento', placeholder: 'Ej: Para cada idea, describe el concepto central...' } ],
+            COAST: [ { id: 'context', label: 'Contexto', placeholder: 'Ej: Estamos desarrollando un nuevo programa de onboarding...' }, { id: 'objective', label: 'Objetivo', placeholder: 'Ej: Crear una experiencia de bienvenida informativa...' }, { id: 'actions', label: 'Acciones', placeholder: 'Ej: Describe un horario de 5 días con actividades clave...' }, { id: 'scenario', label: 'Escenario', placeholder: 'Ej: Imagina a un nuevo ingeniero de software uniéndose...' }, { id: 'task', label: 'Tarea', placeholder: 'Ej: Produce un horario detallado de la primera semana...' } ],
+            RAIN: [ { id: 'role', label: 'Rol', placeholder: 'Ej: Eres un diseñador de producto senior.' }, { id: 'aim', label: 'Objetivo (Aim)', placeholder: 'Ej: Reducir el tiempo de onboarding de usuarios en un 30%.' }, { id: 'input', label: 'Input', placeholder: 'Ej: Usa las métricas del embudo adjuntas...' }, { id: 'numeric_target', label: 'Objetivo Numérico', placeholder: 'Ej: Entrega un wireframe móvil y una tabla de KPI...' } ],
+            FLOW: [ { id: 'function', label: 'Función', placeholder: 'Ej: Redactor de viajes especializado en Asia.' }, { id: 'level', label: 'Nivel', placeholder: 'Ej: Principiantes que visitan Japón por primera vez.' }, { id: 'output', label: 'Output', placeholder: 'Ej: Entrada de blog de 700 palabras sobre "Barrios esenciales de Tokio..."' }, { id: 'win_metric', label: 'Métrica de Éxito', placeholder: 'Ej: Densidad de palabras clave del 1% y una CTA convincente.' } ],
+            PIVO: [ { id: 'problem', label: 'Problema', placeholder: 'Ej: Nuestra startup SaaS no ha alcanzado los objetivos de ARR...' }, { id: 'insights', label: 'Insights', placeholder: 'Ej: El desglose del embudo muestra una alta conversión...' }, { id: 'voice', label: 'Voz', placeholder: 'Ej: Coach de startups experimentado que ha ayudado a empresas...' }, { id: 'outcome', label: 'Resultado (Outcome)', placeholder: 'Ej: Desarrolla un plan de reposicionamiento de 90 días...' } ],
+            SEED: [ { id: 'situation', label: 'Situación', placeholder: 'Ej: Nuestro equipo de desarrollo necesita aprender...' }, { id: 'end_goal', label: 'Objetivo Final', placeholder: 'Ej: Crear un curso de 4 semanas que permita a los desarrolladores...' }, { id: 'examples', label: 'Ejemplos', placeholder: 'Ej: Incluye mini-proyectos semanales que demuestren...' }, { id: 'deliverables', label: 'Entregables', placeholder: 'Ej: Produce un temario completo, rúbrica de evaluación...' } ],
+            DEEP: [ { id: 'direction', label: 'Dirección', placeholder: 'Ej: Escribe un post detallado sobre marca personal...' }, { id: 'existing_info', label: 'Información Existente', placeholder: 'Ej: He adjuntado un esquema que cubre los temas clave.' }, { id: 'expertise', label: 'Experiencia', placeholder: 'Ej: Céntrate en consejos avanzados para profesionales...' }, { id: 'preferred_tone', label: 'Tono Preferido', placeholder: 'Ej: Amistoso y ligeramente humorístico...' } ]
+        };
+
+        const selector = document.getElementById('framework_selector');
+        const builderFieldsContainer = document.getElementById('interactive_builder_fields');
+        const frameworksList = document.getElementById('frameworks_list');
+
+        // Populate frameworks list and selector
+        frameworks.forEach(fw => {
+            // Populate list on the right
+            const card = document.createElement('div');
+            card.className = 'framework-card bg-gray-50 border border-gray-200 rounded-lg shadow-sm';
+            card.innerHTML = `
+                <button class="w-full text-left p-4 flex justify-between items-center" onclick="toggleFramework(this)">
+                    <h3 class="text-lg font-semibold text-indigo-700">${fw.name}</h3>
+                    <svg class="arrow-icon w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div class="framework-details px-4">
+                    <p class="font-semibold text-gray-700">${fw.standsFor}</p>
+                    <p class="mt-2 text-gray-600"><strong class="text-gray-800">¿Por qué funciona?</strong> ${fw.why}</p>
+                    <p class="mt-2 text-gray-600"><strong class="text-gray-800">Mejor para:</strong> ${fw.bestFor}</p>
+                </div>
+            `;
+            frameworksList.appendChild(card);
+
+            // Populate selector on the left
+            const option = document.createElement('option');
+            option.value = fw.id;
+            option.textContent = fw.name;
+            selector.appendChild(option);
+        });
+
+        function toggleFramework(button) {
+            const card = button.parentElement;
+            card.classList.toggle('open');
+        }
+
+        // Interactive Builder Logic
+        function updateBuilderFields() {
+            const selectedFramework = selector.value;
+            const fields = frameworkFields[selectedFramework];
+            builderFieldsContainer.innerHTML = '';
+
+            if (!fields) return;
+
+            fields.forEach(field => {
+                const fieldGroup = document.createElement('div');
+                const label = document.createElement('label');
+                label.setAttribute('for', `fw_${field.id}`);
+                label.className = 'block text-sm font-medium text-gray-700 mb-1';
+                label.textContent = field.label;
+
+                const isTextarea = ['context', 'before', 'after', 'bridge', 'why', 'bestFor', 'steps', 'actions', 'objective', 'problem', 'insights', 'outcome', 'end_goal', 'examples', 'deliverables', 'existing_info', 'expertise'].includes(field.id);
+                const input = document.createElement(isTextarea ? 'textarea' : 'input');
+                input.type = 'text';
+                input.id = `fw_${field.id}`;
+                input.placeholder = field.placeholder;
+                input.className = 'w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500';
+                if (input.tagName === 'TEXTAREA') {
+                    input.rows = 3;
+                }
+                
+                fieldGroup.appendChild(label);
+                fieldGroup.appendChild(input);
+                builderFieldsContainer.appendChild(fieldGroup);
+            });
+        }
+        
+        selector.addEventListener('change', updateBuilderFields);
+        
+        // Initial call to populate fields
+        updateBuilderFields();
+
+        // Generate Prompt Logic
+        function generatePrompt() {
+            const selectedFramework = selector.value;
+            const fields = frameworkFields[selectedFramework];
+            let promptText = '';
+
+            if (!fields) return;
+
+            fields.forEach(field => {
+                const input = document.getElementById(`fw_${field.id}`);
+                if (input && input.value.trim() !== '') {
+                    promptText += `**${field.label}:**\n${input.value.trim()}\n\n`;
+                }
+            });
+
+            const outputContainer = document.getElementById('prompt_output_container');
+            const outputDiv = document.getElementById('prompt_output');
+
+            if (promptText) {
+                outputDiv.textContent = promptText.trim();
+                outputContainer.style.display = 'block';
+            } else {
+                outputDiv.textContent = 'Por favor, complete al menos un campo.';
+                outputContainer.style.display = 'block';
+            }
+        }
+        
+        // Copy to Clipboard
+        function copyToClipboard() {
+            const textToCopy = document.getElementById('prompt_output').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = textToCopy;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            // Show toast notification
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+    </script>
+</body>
+</html>
