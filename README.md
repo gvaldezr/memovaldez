@@ -17,13 +17,15 @@ Sitio estático para la presentación **Mentes Amplificadas** y su guía interac
 │   └── frameworks.html
 └── assets/
     └── docs/
+        ├── frameworks_qr.png
         └── Mentes_Amplificadas.pdf
 ```
 
 ## Descripción de Archivos
 
-- `index.html`: Deck principal de diapositivas (incluye una diapositiva final con QR hacia la guía de frameworks).
+- `index.html`: Deck principal de diapositivas (incluye una diapositiva final con QR local hacia la guía de frameworks).
 - `pages/frameworks.html`: Guía interactiva para construir prompts con distintos frameworks.
+- `assets/docs/frameworks_qr.png`: QR local que apunta a la guía de frameworks.
 - `assets/docs/Mentes_Amplificadas.pdf`: Documento PDF de referencia.
 
 ## Ejecutar Localmente
@@ -56,4 +58,6 @@ git push origin main
 ## Notas
 
 - Mantener rutas relativas para conservar compatibilidad con GitHub Pages.
+- El QR de la presentación se sirve desde un archivo local del repositorio para evitar dependencias externas en runtime.
+- La guía de frameworks incorpora mejoras de accesibilidad (etiquetado ARIA y anuncio de estado al copiar).
 - Evitar agregar archivos de sistema como `.DS_Store`.

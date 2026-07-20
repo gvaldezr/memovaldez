@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guía Interactiva de Ingeniería de Prompts</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-cream: #faf8f5;
@@ -62,17 +59,11 @@
             font-weight: 700;
         }
 
-        .bg-white {
+        .panel-shell {
             background: var(--white) !important;
             border: 4px solid var(--black) !important;
             border-radius: 0 !important;
             box-shadow: 6px 6px 0 var(--black) !important;
-        }
-
-        .border,
-        .border-gray-200,
-        .border-gray-300 {
-            border-color: var(--black) !important;
         }
 
         h2 {
@@ -86,7 +77,7 @@
             margin-bottom: 14px;
         }
 
-        .lg\:col-span-1 > .bg-white h2 {
+        .builder-panel h2 {
             box-shadow: 4px 4px 0 var(--bright-yellow);
         }
 
@@ -146,9 +137,7 @@
             color: var(--black) !important;
         }
 
-        select,
-        input,
-        textarea {
+        .input-field {
             border: 3px solid var(--black) !important;
             border-radius: 0 !important;
             box-shadow: 3px 3px 0 var(--black);
@@ -157,15 +146,13 @@
             background: var(--white);
         }
 
-        select:focus,
-        input:focus,
-        textarea:focus {
+        .input-field:focus {
             outline: none;
             border-color: var(--black) !important;
             box-shadow: 0 0 0 3px var(--cyan), 3px 3px 0 var(--black);
         }
 
-        button.bg-indigo-600 {
+        .generate-btn {
             background: var(--hot-pink) !important;
             color: var(--black) !important;
             border: 4px solid var(--black) !important;
@@ -175,8 +162,12 @@
             font-weight: 900;
         }
 
-        button.bg-indigo-600:hover {
+        .generate-btn:hover {
             background: var(--bright-yellow) !important;
+        }
+
+        .framework-title {
+            color: var(--black) !important;
         }
 
         #prompt_output_container h3 {
@@ -232,6 +223,17 @@
             opacity: 1;
         }
 
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
         @media (max-width: 1024px) {
             header h1 {
                 font-size: 2.2rem !important;
@@ -253,13 +255,13 @@
             
             <!-- Interactive Builder -->
             <div class="lg:col-span-1 sticky top-8 self-start">
-                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                <div class="builder-panel panel-shell p-6 rounded-xl shadow-lg border border-gray-200">
                     <h2 class="text-2xl font-bold mb-4 text-gray-900">Constructor de Prompts</h2>
                     <p class="text-gray-600 mb-6">Seleccione un framework y complete los campos para generar un prompt estructurado.</p>
                     
                     <div class="mb-4">
                         <label for="framework_selector" class="block text-sm font-medium text-gray-700 mb-1">Framework:</label>
-                        <select id="framework_selector" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <select id="framework_selector" class="input-field w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                             <!-- Options will be dynamically inserted here -->
                         </select>
                     </div>
@@ -268,7 +270,7 @@
                         <!-- Fields will be dynamically inserted here -->
                     </div>
 
-                    <button onclick="generatePrompt()" class="w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                    <button id="generate_prompt_btn" class="generate-btn w-full mt-6 bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
                         Generar Prompt
                     </button>
 
@@ -276,7 +278,8 @@
                         <h3 class="text-lg font-semibold text-gray-800 mb-2">Prompt Generado:</h3>
                         <div class="relative">
                             <div id="prompt_output" class="code-block text-sm"></div>
-                            <button onclick="copyToClipboard()" class="absolute top-2 right-2 bg-gray-600 text-gray-200 p-2 rounded-md hover:bg-gray-500 transition-colors">
+                            <button id="copy_prompt_btn" type="button" aria-label="Copiar prompt generado" title="Copiar prompt generado" class="absolute top-2 right-2 bg-gray-600 text-gray-200 p-2 rounded-md hover:bg-gray-500 transition-colors">
+                                <span class="sr-only">Copiar prompt generado</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                   <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
                                   <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
@@ -289,7 +292,7 @@
 
             <!-- Frameworks Explanation -->
             <div class="lg:col-span-2">
-                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                <div class="panel-shell p-6 rounded-xl shadow-lg border border-gray-200">
                     <h2 class="text-3xl font-bold mb-6 text-gray-900">¿Qué es un Framework de Prompts?</h2>
                     <p class="text-gray-600 mb-4">Un framework de prompts eficaz proporciona una estructura clara, incluye el contexto necesario y establece expectativas explícitas para la IA. Piense en ello como dar instrucciones detalladas en lugar de una solicitud vaga.</p>
                     <p class="text-gray-600">A continuación se presentan varios frameworks populares que pueden mejorar drásticamente la calidad de las respuestas de la IA.</p>
@@ -302,7 +305,7 @@
         </div>
     </div>
 
-    <div id="toast" class="toast">¡Prompt copiado al portapapeles!</div>
+    <div id="toast" class="toast" role="status" aria-live="polite">¡Prompt copiado al portapapeles!</div>
 
     <script>
         // Data for frameworks
@@ -345,20 +348,23 @@
         const selector = document.getElementById('framework_selector');
         const builderFieldsContainer = document.getElementById('interactive_builder_fields');
         const frameworksList = document.getElementById('frameworks_list');
+        const generatePromptBtn = document.getElementById('generate_prompt_btn');
+        const copyPromptBtn = document.getElementById('copy_prompt_btn');
 
         // Populate frameworks list and selector
-        frameworks.forEach(fw => {
+        frameworks.forEach((fw, index) => {
             // Populate list on the right
+            const detailsId = `framework_details_${index}`;
             const card = document.createElement('div');
-            card.className = 'framework-card bg-gray-50 border border-gray-200 rounded-lg shadow-sm';
+            card.className = 'framework-card rounded-lg shadow-sm';
             card.innerHTML = `
-                <button class="w-full text-left p-4 flex justify-between items-center" onclick="toggleFramework(this)">
-                    <h3 class="text-lg font-semibold text-indigo-700">${fw.name}</h3>
+                <button class="w-full text-left p-4 flex justify-between items-center" aria-expanded="false" aria-controls="${detailsId}">
+                    <h3 class="framework-title text-lg font-semibold text-indigo-700">${fw.name}</h3>
                     <svg class="arrow-icon w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
-                <div class="framework-details px-4">
+                <div class="framework-details px-4" id="${detailsId}">
                     <p class="font-semibold text-gray-700">${fw.standsFor}</p>
                     <p class="mt-2 text-gray-600"><strong class="text-gray-800">¿Por qué funciona?</strong> ${fw.why}</p>
                     <p class="mt-2 text-gray-600"><strong class="text-gray-800">Mejor para:</strong> ${fw.bestFor}</p>
@@ -376,6 +382,8 @@
         function toggleFramework(button) {
             const card = button.parentElement;
             card.classList.toggle('open');
+            const isExpanded = card.classList.contains('open');
+            button.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
         }
 
         // Interactive Builder Logic
@@ -398,7 +406,7 @@
                 input.type = 'text';
                 input.id = `fw_${field.id}`;
                 input.placeholder = field.placeholder;
-                input.className = 'w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500';
+                input.className = 'input-field w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500';
                 if (input.tagName === 'TEXTAREA') {
                     input.rows = 3;
                 }
@@ -410,6 +418,16 @@
         }
         
         selector.addEventListener('change', updateBuilderFields);
+        generatePromptBtn.addEventListener('click', generatePrompt);
+        copyPromptBtn.addEventListener('click', copyToClipboard);
+
+        frameworksList.addEventListener('click', (event) => {
+            const trigger = event.target.closest('button[aria-controls]');
+            if (!trigger) {
+                return;
+            }
+            toggleFramework(trigger);
+        });
         
         // Initial call to populate fields
         updateBuilderFields();
@@ -442,14 +460,22 @@
         }
         
         // Copy to Clipboard
-        function copyToClipboard() {
+        async function copyToClipboard() {
             const textToCopy = document.getElementById('prompt_output').innerText;
-            const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = textToCopy;
-            document.body.appendChild(tempTextArea);
-            tempTextArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempTextArea);
+            if (!textToCopy.trim()) {
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+            } catch (_error) {
+                const tempTextArea = document.createElement('textarea');
+                tempTextArea.value = textToCopy;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextArea);
+            }
 
             // Show toast notification
             const toast = document.getElementById('toast');

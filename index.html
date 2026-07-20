@@ -26,8 +26,9 @@
 
         body, html {
             width: 100%;
-            height: 100%;
-            overflow: hidden;
+            min-height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
             background-color: var(--bg-cream);
             background-image: 
                 linear-gradient(var(--grid-color) 2px, transparent 2px),
@@ -387,6 +388,113 @@
             border: 3px solid var(--black);
             transform: rotate(1deg);
         }
+
+        @media (max-width: 1024px) {
+            .deck-container {
+                padding: 18px;
+            }
+
+            .slide {
+                max-height: none;
+            }
+
+            .mega-title-box {
+                padding: 26px;
+            }
+
+            .mega-title-box h1 {
+                font-size: 3.1rem;
+            }
+
+            .slide-heading {
+                font-size: 2rem;
+            }
+
+            .timeline-row {
+                grid-template-columns: 84px 4px 1fr;
+                gap: 12px;
+            }
+
+            .timeline-block {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .prompt-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-controls {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .deck-container {
+                padding: 12px;
+                min-height: 100vh;
+            }
+
+            .slides-viewport {
+                align-items: flex-start;
+            }
+
+            .slide {
+                position: relative;
+                height: auto;
+            }
+
+            .header-bar {
+                transform: none;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .mega-title-box h1 {
+                font-size: 2.2rem;
+            }
+
+            .mega-title-box p {
+                font-size: 1.1rem;
+            }
+
+            .slide-heading {
+                font-size: 1.45rem;
+                line-height: 1.15;
+            }
+
+            .card h3 {
+                font-size: 1.35rem;
+            }
+
+            .card p,
+            .prompt-code {
+                font-size: 0.98rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .arch-layer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 8px 14px;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
     </style>
 </head>
 <body>
@@ -572,7 +680,7 @@
                         <div class="badge-title">🟢 Prompt Estructurado (CO-STAR)</div>
                         <div class="prompt-code"><b>CONTEXTO:</b> Estamos iniciando el semestre en la Universidad Anáhuac. El sistema de inscripción registra saturación de accesos, retrasando las altas y bajas. Los alumnos están ansiosos.
 <b>OBJETIVO:</b> Redactar un correo informativo y de contención que guíe al alumno si el sistema falla.
-<b>ESTILE:</b> Coordinador de Servicios Escolares.
+<b>ESTILO:</b> Coordinador de Servicios Escolares.
 <b>TONO:</b> Empático, institucional, resolutivo y muy cercano.
 <b>AUDIENCIA:</b> Alumnos de reingreso de licenciatura.
 <b>RESPUESTA:</b> Correo con asunto empático y 3 recomendaciones de soporte.</div>
@@ -729,7 +837,7 @@ No generes el plan final hasta terminar las 5 preguntas.</div>
                         <h3>ACCESO DIRECTO</h3>
                         <div style="background: var(--white); border: 4px solid var(--black); box-shadow: 6px 6px 0px var(--black); padding: 12px; margin: 10px 0 15px 0;">
                             <img
-                                src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=https%3A%2F%2Fgvaldezr.github.io%2Fmemovaldez%2Fpages%2Fframeworks.html"
+                                src="assets/docs/frameworks_qr.png"
                                 alt="QR hacia la guía de frameworks"
                                 style="display: block; width: 320px; height: 320px;"
                             >
@@ -762,7 +870,7 @@ No generes el plan final hasta terminar las 5 preguntas.</div>
             <button class="btn pink-btn" id="fullscreen-btn">📺 Fullscreen</button>
             <div class="nav-buttons">
                 <button class="btn" id="prev-btn">◀ Atrás</button>
-                <div class="slide-counter" id="slide-num">1 / 20</div>
+                <div class="slide-counter" id="slide-num">1 / 14</div>
                 <button class="btn cyan-btn" id="next-btn">Sig ▶</button>
             </div>
         </div>
@@ -827,6 +935,8 @@ No generes el plan final hasta terminar las 5 preguntas.</div>
                 document.exitFullscreen();
             }
         });
+
+        updateSlides();
     </script>
 </body>
 </html>
